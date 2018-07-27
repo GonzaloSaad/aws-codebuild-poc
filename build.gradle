@@ -1,14 +1,80 @@
-group 'aws.codebuild.poc'
-version '1.0-SNAPSHOT'
+buildscript {
+    ext {
+        shadowVersion = '2.0.3'
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:${shadowVersion}"
+    }
+}
+
+
 
 apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
 
+
+group = 'aws.codebuild.poc'
+version = "1.0-SNAPSHOT"
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+ext {
+    awsLambdaEventsVersion = "2.2.2"
+    awsLambdaCoreVersion = "1.1.0"
+}
+
+ext['reactor.version'] = "3.1.7.RELEASE"
+
+assemble.dependsOn = [shadowJar]
+
+jar {
+    manifest {
+        attributes 'Start-Class': ''
+    }
+}
+
+import com.github.jengelman.gradle.plugins.shadow.transformers.*
+
+shadowJar {
+    classifier = 'aws'
+    // Required for Spring
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    transform(PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories' ]
+        mergeStrategy = "append"
+    }
+}
+
+configurations {
+    testCompile.extendsFrom(compileOnly)
 }
 
 dependencies {
+    compile group: 'com.amazonaws', name: 'aws-lambda-java-events', version: awsLambdaEventsVersion
+    compileOnly("com.amazonaws:aws-lambda-java-core:${awsLambdaCoreVersion}")
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+
 }
+
+
+
+
+
+
