@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        shadowVersion = '2.0.3'
+        shadowVersion = '1.2.4'
     }
     repositories {
         jcenter()
