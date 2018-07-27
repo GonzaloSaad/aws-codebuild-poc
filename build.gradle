@@ -67,7 +67,7 @@ configurations {
 
 dependencies {
     compile group: 'com.amazonaws', name: 'aws-lambda-java-events', version: awsLambdaEventsVersion
-    compileOnly("com.amazonaws:aws-lambda-java-core:${awsLambdaCoreVersion}")
+    compile("com.amazonaws:aws-lambda-java-core:${awsLambdaCoreVersion}")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 
